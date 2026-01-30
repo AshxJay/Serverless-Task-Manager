@@ -10,7 +10,7 @@ The system exposes RESTful APIs to create and retrieve tasks, persists data in D
 
 ---
 
-## 🚀 Features
+## Features
 
 * Serverless backend using **AWS Lambda**
 * REST APIs exposed via **Amazon API Gateway**
@@ -23,7 +23,7 @@ The system exposes RESTful APIs to create and retrieve tasks, persists data in D
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 **High-level flow:**
 
