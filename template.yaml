@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Task Management System (IaC with environments)
+
+# -----------------------------
+# PARAMETERS (Environment Setup)
+# -----------------------------
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+    Description: Deployment environment (dev or prod)
+
+# -----------------------------
+# GLOBAL SETTINGS
+# -----------------------------
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 10
+    MemorySize: 128
+
+# -----------------------------
+# RESOURCES
+# -----------------------------
+Resources:
+
+  # DynamoDB Table
+  TasksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub Tasks-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: taskId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: taskId
+          KeyType: HASH
+
+  # Lambda: Create Task
+  CreateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub createTask-${Environment}
+      Handler: create_task.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TasksTable
+      Events:
+        CreateTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: post
+
+  # Lambda: Get Tasks
+  GetTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub getTasks-${Environment}
+      Handler: get_tasks.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TasksTable
+      Events:
+        GetTasksApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: get
