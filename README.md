@@ -50,7 +50,7 @@ Client
 
 ---
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 ### Create Task
 
